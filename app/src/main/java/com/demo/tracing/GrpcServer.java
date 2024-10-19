@@ -15,8 +15,9 @@ import io.grpc.examples.helloworld.GreeterGrpc;
 import io.grpc.examples.helloworld.HelloReply;
 import io.grpc.examples.helloworld.HelloRequest;
 import io.grpc.stub.StreamObserver;
-import io.opentelemetry.api.trace.SpanKind;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Context;
 
 public class GrpcServer {
 
@@ -65,14 +66,17 @@ public class GrpcServer {
         }
     }
 
-
     static class GreetImpl extends GreeterGrpc.GreeterImplBase {
         @Override
-        @WithSpan(value = "server-hello", kind = SpanKind.SERVER)
         public void sayHello(HelloRequest request, StreamObserver<HelloReply> responseObserver) {
+            Tracer tracer = OtelApplication.tracer("server-hello");
+            Span span = tracer.spanBuilder("server/hello")
+                    .setParent(Span.current().storeInContext(Context.current()))
+                    .startSpan();
             HelloReply reply = HelloReply.newBuilder().setMessage("Hello " + request.getName()).build();
             responseObserver.onNext(reply);
             responseObserver.onCompleted();
+            span.end();
         }
     }
 }
