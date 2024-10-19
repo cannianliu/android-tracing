@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlinAndroid)
+    id 'com.google.protobuf' version '0.9.4'
 }
 
 android {
@@ -30,15 +31,45 @@ android {
     }
 }
 
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.25.3"
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.67.1'
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java { option 'lite' }
+            }
+            task.plugins {
+                grpc { option 'lite' }
+            }
+        }
+    }
+}
+
 dependencies {
 
     implementation platform("io.opentelemetry:opentelemetry-bom:1.43.0")
     implementation platform('io.opentelemetry:opentelemetry-bom-alpha:1.43.0-alpha')
+    implementation(platform("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha:2.9.0-alpha"))
     implementation("io.opentelemetry:opentelemetry-exporter-otlp")
     implementation("io.opentelemetry:opentelemetry-api-incubator")
     implementation("io.opentelemetry.android:android-agent:0.7.0-alpha")
 
+    implementation("io.opentelemetry.instrumentation:opentelemetry-grpc-1.6:1.32.0-alpha")
+    implementation('io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations:2.6.0')
+
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.2")
+
+    implementation 'io.grpc:grpc-okhttp:1.67.1'
+    implementation 'io.grpc:grpc-protobuf-lite:1.67.1'
+    implementation 'io.grpc:grpc-stub:1.67.1'
+    compileOnly 'org.apache.tomcat:annotations-api:6.0.53' // necessary for Java 9+
 
     implementation libs.appcompat
     implementation libs.material

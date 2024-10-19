@@ -7,11 +7,27 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/enter_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Enter"
-        tools:layout_editor_absoluteX="158dp"
-        tools:layout_editor_absoluteY="602dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Spinner
+            android:id="@+id/spinner2"
+            android:layout_width="match_parent"
+            android:layout_height="57dp" />
+
+        <Button
+            android:id="@+id/button_grpc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Grpc" />
+
+        <Button
+            android:id="@+id/enter_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enter" />
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
